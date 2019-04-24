@@ -1,18 +1,91 @@
-<!doctype html>
+<html>
+  <style>
+    .node {
+      pointer-events: none;
+    }
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+    .node circle {
+      stroke: darkgray;
+      fill: lightgray;
+    }
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
+    .edgePath path.path {
+      stroke: #333;
+      fill: none;
+      stroke-width: 1.5px;
+    }
+  </style>
 
-  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js"></script>
+  <body>
+    <div id="option">
+      <input
+        name="updateButton"
+        type="button"
+        value="Update"
+        onclick="updateData()"
+      />
+    </div>
+    <svg width="960" height="600"></svg>
+  </body>
+  <script>
+    // Display options
+    var options = {
+      rankdir: "LR"
+    };
 
-</head>
+    // Create the input graph
+    var g = new dagreD3.graphlib.Graph()
+      .setGraph(options)
+      .setDefaultEdgeLabel(function() {
+        return {};
+      });
 
-<body>
-  <script src="main.js"></script>
-</body>
+    // Set nodes
+    var n_nodes = 8;
+    for (var i = 0; i < n_nodes; i++) {
+      g.setNode(i, {
+        label: i
+      });
+    }
+
+    g.nodes().forEach(function(v) {
+      var node = g.node(v);
+      node.shape = "circle";
+    });
+
+    // Set edges
+    g.setEdge(0, 1);
+    g.setEdge(1, 2);
+    g.setEdge(2, 3);
+    g.setEdge(3, 4);
+    g.setEdge(4, 5);
+    g.setEdge(1, 1);
+    g.setEdge(1, 6);
+    g.setEdge(6, 7);
+    g.setEdge(7, 0, { label: "something else" });
+    g.setEdge(7, 4, { label: "4" });
+
+    // Create the renderer
+    var render = new dagreD3.render();
+
+    // Set up an SVG group so that we can translate the final graph.
+    var svg = d3.select("svg");
+    // Run the renderer. This is what draws the final graph.
+    render(svg, g);
+    svg.selectAll("g.node").on("click", function(id) {
+      console.log("Clicked " + id);
+    });
+    g.node(1).style = "fill: #f77";
+
+    function updateData() {
+      g.node(1).style = "fill: #f77";
+      g.setEdge(1, 2, { label: "fuck" });
+
+      g.edge(1, 2).style =
+        "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+      render(svg, g);
+    }
+  </script>
 </html>
