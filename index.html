@@ -1,4 +1,5 @@
 <html>
+  <!-- START CSS -->
   <style>
     .node {
       pointer-events: none;
@@ -15,10 +16,19 @@
       stroke-width: 1.5px;
     }
   </style>
-
+  <!-- END CSS -->
+  <!-- LIB DEPS -->
   <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js"></script>
+
+  <!-- ALL INPUT FIELDS CSS -->
   <body>
+    <form>
+      Source:<br />
+      <input type="text" name="firstname" /><br />
+      Destination: <br />
+      <input type="text" name="lastname" />
+    </form>
     <div id="option">
       <input
         name="updateButton"
@@ -29,6 +39,8 @@
     </div>
     <svg width="960" height="600"></svg>
   </body>
+
+  <!-- BEGIN JS -->
   <script>
     // Display options
     var options = {
@@ -56,16 +68,16 @@
     });
 
     // Set edges
-    g.setEdge(0, 1);
-    g.setEdge(1, 2);
-    g.setEdge(2, 3);
-    g.setEdge(3, 4);
-    g.setEdge(4, 5);
-    g.setEdge(1, 1);
-    g.setEdge(1, 6);
-    g.setEdge(6, 7);
-    g.setEdge(7, 0, { label: "something else" });
-    g.setEdge(7, 4, { label: "4" });
+    g.setEdge(0, 1, { arrowhead: "undirected" });
+    g.setEdge(1, 2, { arrowhead: "undirected" });
+    g.setEdge(2, 3, { arrowhead: "undirected" });
+    g.setEdge(3, 4, { arrowhead: "undirected" });
+    g.setEdge(4, 5, { arrowhead: "undirected" });
+    g.setEdge(1, 1, { arrowhead: "undirected" });
+    g.setEdge(1, 6, { arrowhead: "undirected" });
+    g.setEdge(6, 7, { arrowhead: "undirected" });
+    g.setEdge(7, 0, { label: "something else", arrowhead: "undirected" });
+    g.setEdge(7, 4, { label: "4", arrowhead: "undirected" });
 
     // Create the renderer
     var render = new dagreD3.render();
@@ -74,15 +86,15 @@
     var svg = d3.select("svg");
     // Run the renderer. This is what draws the final graph.
     render(svg, g);
-    svg.selectAll("g.node").on("click", function(id) {
-      console.log("Clicked " + id);
-    });
-    g.node(1).style = "fill: #f77";
 
+    /**
+     * HELPER FUNCTIONS
+     *
+     **/
     function updateData() {
       g.node(1).style = "fill: #f77";
       g.setEdge(1, 2, { label: "fuck" });
-
+      console.log(g.isDirected());
       g.edge(1, 2).style =
         "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
       render(svg, g);
