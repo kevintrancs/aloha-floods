@@ -101,15 +101,28 @@
      **/
     function updateData() {
       g.node(1).style = "fill: #f77";
-      g.setEdge(1, 2, { label: "fuck" });
+      //g.setEdge(1, 2, {label: "fuck"});
       var src = document.getElementById("source").value;
       var dest = document.getElementById("destination").value;
       console.log(src, dest);
-      //pass src and dest into the algorithm
-      //receive back a list of lists or dictionary of lists or something
+      // pass src and dest into the algorithm
+      // receive back a list of nodes that the path travels through
+
+      // TODO: The graph looks undirected but is still directed
+      // Need to make undirected so order of nodes in an edge does not matter
+      // i.e g.edge(0, 1) should be equal to g.edge(1, 0)
       console.log(g.isDirected());
-      g.edge(1, 2).style =
-        "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+      // Example of output:
+      listOfLinks = [1, 7, 4, 5];
+      for (var i = 0; i < listOfLinks.length; i++) {
+        g.node(listOfLinks[i]).style = "fill: #f77";
+        if (i !== listOfLinks.length - 1) { //For every node except the last one
+          g.edge(listOfLinks[i], listOfLinks[i+1]).style = 
+            "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+        }
+      }
+      // g.edge(1, 2).style =
+      //   "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
       render(svg, g);
     }
   </script>
