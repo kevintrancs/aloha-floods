@@ -1,0 +1,267 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Networks Project</title>
+  </head>
+  <!-- START CSS -->
+  <style>
+    .node {
+      pointer-events: none;
+    }
+
+    .node circle {
+      stroke: darkgray;
+      fill: lightgray;
+    }
+
+    .edgePath path.path {
+      stroke: #333;
+      fill: none;
+      stroke-width: 1.5px;
+    }
+  </style>
+  <!-- END CSS -->
+  <!-- LIB DEPS -->
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js"></script>
+  <script src="main2.js"></script>
+
+  <!-- ALL INPUT FIELDS CSS -->
+  <body>
+      <form>
+        Source:<br />
+        <input type="text" name="firstname" id="source" /><br />
+        Destination: <br />
+        <input type="text" name="lastname" id="destination" />
+      </form>
+      <input
+        name="updateButton"
+        type="button"
+        value="Flood"
+        onclick="updateData()"
+      />
+      <br />
+      <br />
+      <form>
+        <input
+          type="text"
+          name="firstname"
+          id="upd_source"
+          placeholder="Update Source"
+        />
+  
+        <br />
+        <input
+          type="text"
+          name="lastname"
+          id="upd_destination"
+          placeholder="Update Destination"
+        />
+        <br />
+        <input
+          type="text"
+          name="lastname"
+          id="upd_edge"
+          placeholder=" Update Edge Value"
+        />
+      </form>
+      <div id="option">
+        <input
+          name="updateEdge"
+          type="button"
+          value="Update Edge"
+          onclick="updateEdge()"
+        />
+  
+        <input
+          name="changeNode"
+          type="button"
+          value="Clean Graph"
+          onclick="resetGraph()"
+        />
+      </div>
+      <br />
+      <p>Links Path:</p>
+      <p id="path">None</p>
+      <br />
+      <svg width="960" height="600"></svg>
+  </body>
+
+  <!-- BEGIN JS -->
+  <script>
+    // Display options
+    var options = {
+      directed: false,
+      rankdir: "LR"
+    };
+
+    // Create the input graph
+    var g = new dagreD3.graphlib.Graph()
+      .setGraph(options)
+      .setDefaultEdgeLabel(function() {
+        return {};
+      });
+
+    // Set nodes
+    var n_nodes = 8;
+    for (var i = 0; i < n_nodes; i++) {
+      g.setNode(i, {
+        label: i
+      });
+    }
+
+    g.nodes().forEach(function(v) {
+      var node = g.node(v);
+      node.shape = "circle";
+    });
+
+    // Set edges
+    g.setEdge(0, 1, { label: "3", arrowhead: "undirected" });
+    g.setEdge(1, 2, { label: "5", arrowhead: "undirected" });
+    g.setEdge(2, 3, { label: "12", arrowhead: "undirected" });
+    g.setEdge(3, 4, { label: "2", arrowhead: "undirected" });
+    g.setEdge(4, 5, { label: "7", arrowhead: "undirected" });
+    g.setEdge(1, 7, { label: "3", arrowhead: "undirected" });
+    g.setEdge(1, 6, { label: "5", arrowhead: "undirected" });
+    g.setEdge(6, 7, { label: "9", arrowhead: "undirected" });
+    g.setEdge(7, 0, { label: "7", arrowhead: "undirected" });
+    g.setEdge(7, 4, { label: "4", arrowhead: "undirected" });
+    g.setEdge(6, 2, { label: "6", arrowhead: "undirected" });
+    g.setEdge(0, 4, { label: "20", arrowhead: "undirected" });
+    g.setEdge(1, 3, { label: "3", arrowhead: "undirected" });
+
+    // Create the renderer
+    var render = new dagreD3.render();
+
+    // Set up an SVG group so that we can translate the final graph.
+    var svg = d3.select("svg");
+    // Run the renderer. This is what draws the final graph.
+    render(svg, g);
+
+    /**
+     * HELPER FUNCTIONS
+     *
+     **/
+
+     graphList = [
+                [0, 1, 3],
+                [1, 2, 5],
+                [2, 3, 12],
+                [3, 4, 2],
+                [4, 5, 7],
+                [1, 7, 3],
+                [1, 6, 5],
+                [6, 7, 9],
+                [0, 7, 7],
+                [4, 7, 4],
+                [2, 6, 6],
+                [0, 4, 20],
+                [1, 3, 3],
+                [8, 7, 6],
+                [8, 0, 7]
+                ];
+
+    graph_edges = [[0, 1],
+                   [0, 4],
+                   [0, 7],
+                   [1, 0],
+                   [1, 2],
+                   [1, 3], 
+                   [1, 6],
+                   [1, 7],
+                   [2, 1],
+                   [2, 3],
+                   [2, 6],
+                   [3, 1],
+                   [3, 2],
+                   [3, 4],
+                   [4, 0],
+                   [4, 3],
+                   [4, 5],
+                   [4, 7],
+                   [5, 4],
+                   [6, 1],
+                   [6, 2],
+                   [6, 7],
+                   [7, 0],
+                   [7, 1],
+                   [7, 4],
+                   [7, 6]]
+    
+    var usedNodes = [];
+
+    function updateData() {
+
+      var src = document.getElementById("source").value;
+      var dest = document.getElementById("destination").value;
+      console.log(src, dest);
+      var src1 = parseInt(src);
+      usedNodes.push(src1);
+      var dest1 = parseInt(dest);
+      // pass src and dest into the algorithm
+      // receive back a list of nodes that the path travels through
+
+      // TODO: The graph looks undirected but is still directed
+      // Need to make undirected so order of nodes in an edge does not matter
+      // i.e g.edge(0, 1) should be equal to g.edge(1, 0)
+      var path = [];
+      var count = {
+        value: 0
+      };
+      var final_path = [];
+      var path = flood(graph_edges, src1, path);
+      final_path.push(path);
+      for (var i=0; i<path.length; i++) {
+        if (!usedNodes.includes(path[i][1])) {
+          document.getElementById("source").value = path[i][1];
+        }
+      }
+      for (var i=0; i<final_path.length; i++) {
+        for (var j=0; j<final_path[i].length; j++) {
+          g.node(final_path[i][j][0]).style = "fill: #f77";
+          g.node(final_path[i][j][1]).style = "fill: #f77";
+          try {
+            g.edge(final_path[i][j][0], final_path[i][j][1]).style = 
+              "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+          } catch (err) {
+            try {
+              g.edge(final_path[i][j][1], final_path[i][j][0]).style = 
+                "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";            
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+      }
+      render(svg, g);
+    }
+    function resetGraph() {
+      g.edges().forEach(function(element) {
+        g.edge(element).style = "stroke: #333 fill: none; stroke-width: 1.5px;";
+      });
+      g.nodes().forEach(function(element) {
+        g.node(element).style = " fill: lightgray";
+      });
+      render(svg, g);
+      document.getElementById("path").innerHTML = "None";
+    }
+    function updateEdge() {
+      var src = parseInt(document.getElementById("upd_source").value);
+      var dest = parseInt(document.getElementById("upd_destination").value);
+      var edge = parseInt(document.getElementById("upd_edge").value);
+      if (g.hasEdge(src, dest)) {
+        g.setEdge(src, dest, { label: edge, arrowhead: "undirected" });
+        graphList.forEach(function(row) {
+          if (row[0] === src && row[1] === dest) {
+            row[2] = edge;
+          }
+        });
+      }
+      document.getElementById("upd_source").value = "";
+      document.getElementById("upd_destination").value = "";
+      document.getElementById("upd_edge").value = "";
+      render(svg, g);
+    }
+
+  </script>
+</html>
