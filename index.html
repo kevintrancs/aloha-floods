@@ -24,6 +24,7 @@
   <!-- LIB DEPS -->
   <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js"></script>
+  <script src="main.js"></script>
 
   <!-- ALL INPUT FIELDS CSS -->
   <body>
@@ -100,20 +101,32 @@
      *
      **/
     function updateData() {
-      g.node(1).style = "fill: #f77";
-      //g.setEdge(1, 2, {label: "fuck"});
-      var src = document.getElementById("source").value;
-      var dest = document.getElementById("destination").value;
+      var src = parseInt(document.getElementById("source").value);
+      var dest = parseInt(document.getElementById("destination").value);
       console.log(src, dest);
       // pass src and dest into the algorithm
-      // receive back a list of nodes that the path travels through
+
+      graphList = [[0, 1, 3],
+                   [1, 2, 5],
+                   [2, 3, 12],
+                   [3, 4, 2],
+                   [4, 5, 7],
+                   [1, 7, 3],
+                   [1, 6, 5],
+                   [6, 7, 9],
+                   [0, 7, 7],
+                   [4, 7, 4],
+                   [2, 6, 6],
+                   [0, 4, 20],
+                   [1, 3, 3]]
+      listOfLinks = flood(src, dest, graphList, [], {value: 0}, {destFound: false});
 
       // TODO: The graph looks undirected but is still directed
       // Need to make undirected so order of nodes in an edge does not matter
       // i.e g.edge(0, 1) should be equal to g.edge(1, 0)
       console.log(g.isDirected());
+      console.log(listOfLinks);
       // Example of output:
-      listOfLinks = [1, 7, 4, 5];
       for (var i = 0; i < listOfLinks.length; i++) {
         g.node(listOfLinks[i]).style = "fill: #f77";
         if (i !== listOfLinks.length - 1) { //For every node except the last one
@@ -121,8 +134,6 @@
             "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
         }
       }
-      // g.edge(1, 2).style =
-      //   "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
       render(svg, g);
     }
   </script>
