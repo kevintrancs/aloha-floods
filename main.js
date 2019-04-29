@@ -51,6 +51,9 @@ function flood(src, dest, graph, path, count, found) {
     else {
         // loop thru edges
         for(var i=0; i<graph.length; i++) {
+
+            console.log("New Call: ", graph[i][0])
+
             // check if first index in edge is source
             if (graph[i][0] === src) {
                 console.log("current src: ", graph[i][0])
@@ -61,7 +64,7 @@ function flood(src, dest, graph, path, count, found) {
                     //flood(graph[i][0], dest, graph, path, count, found);
                     path.push(dest);
                     found.destFound = true;
-                    return;
+                    return path;
                 }
                 // if first index of edge is source, check
                 // if connection is already in path
@@ -70,6 +73,26 @@ function flood(src, dest, graph, path, count, found) {
                     count.value++;
                     path.push(src);
                     flood(graph[i][1], dest, graph, path, count, found);
+                }
+            }
+            else if (graph[i][1] === src) {
+                console.log("current src: ", graph[i][1])
+                if (graph[i][0] === dest) {
+                    console.log("found dest")
+                    count.value++;
+                    path.push(graph[i][1]);
+                    //flood(graph[i][0], dest, graph, path, count, found);
+                    path.push(dest);
+                    found.destFound = true;
+                    return path;
+                }
+                // if first index of edge is source, check
+                // if connection is already in path
+                if (!path.includes(graph[i][0]) && !path.includes(dest)) {
+                    console.log("current path: ", path)
+                    count.value++;
+                    path.push(src);
+                    flood(graph[i][0], dest, graph, path, count, found);
                 }
             }
         }

@@ -38,8 +38,15 @@
       <input
         name="updateButton"
         type="button"
-        value="Update"
+        value="Flood"
         onclick="updateData()"
+      />
+
+      <input
+        name="changeNode"
+        type="button"
+        value="Clean Graph"
+        onclick="reset_graph()"
       />
     </div>
     <svg width="960" height="600"></svg>
@@ -94,7 +101,7 @@
     var svg = d3.select("svg");
     // Run the renderer. This is what draws the final graph.
     render(svg, g);
-
+    links = [];
     /**
      * HELPER FUNCTIONS
      *
@@ -129,6 +136,7 @@
         { destFound: false }
       );
 
+      links = listOfLinks;
       console.log("List of links", listOfLinks);
       console.log(g.isDirected());
       console.log(listOfLinks);
@@ -145,14 +153,22 @@
             listOfLinks[i + 1]
           );
 
-          if ((listOfLinks[i], listOfLinks[i + 1])) {
-            if (g.hasEdge(listOfLinks[i], listOfLinks[i + 1])) {
-              g.edge(listOfLinks[i], listOfLinks[i + 1]).style =
-                "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
-            }
+          if (g.hasEdge(listOfLinks[i], listOfLinks[i + 1])) {
+            g.edge(listOfLinks[i], listOfLinks[i + 1]).style =
+              "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
           }
         }
       }
+      render(svg, g);
+    }
+
+    function reset_graph() {
+      g.edges().forEach(function(element) {
+        g.edge(element).style = "stroke: #333 fill: none; stroke-width: 1.5px;";
+      });
+      g.nodes().forEach(function(element) {
+        g.node(element).style = " fill: lightgray";
+      });
       render(svg, g);
     }
   </script>
