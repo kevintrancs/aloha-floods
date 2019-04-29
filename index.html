@@ -164,7 +164,7 @@
     function findFlood() {
       var src = parseInt(document.getElementById("source").value);
       var dest = parseInt(document.getElementById("destination").value);
-      console.log(src, dest);
+      //console.log(src, dest);
       // pass src and dest into the algorithm
       listOfLinks = flood(
         src,
@@ -179,21 +179,21 @@
 
       path = "";
 
-      console.log("List of links", listOfLinks);
-      console.log(g.isDirected());
-      console.log(listOfLinks);
+      //console.log("List of links", listOfLinks);
+      //console.log(g.isDirected());
+      //console.log(listOfLinks);
       // Example of output:
       for (var i = 0; i < listOfLinks.length; i++) {
         g.node(listOfLinks[i]).style = "fill: #f77";
         if (i !== listOfLinks.length - 1) {
           //For every node except the last one
 
-          console.log(
+          /* console.log(
             "links from ",
             listOfLinks[i],
             " to ",
             listOfLinks[i + 1]
-          );
+          ); */
           if (g.hasEdge(listOfLinks[i], listOfLinks[i + 1])) {
             g.edge(listOfLinks[i], listOfLinks[i + 1]).style =
               "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
@@ -202,7 +202,7 @@
         }
       }
       render(svg, g);
-      console.log(path);
+      //console.log(path);
       document.getElementById("source").value = "";
       document.getElementById("destination").value = "";
       document.getElementById("path").innerHTML = path;
