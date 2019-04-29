@@ -1,6 +1,6 @@
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Networks Project</title>
   </head>
   <!-- START CSS -->
@@ -49,12 +49,11 @@
   <script>
     // Display options
     var options = {
-      directed: false,
       rankdir: "LR"
     };
 
     // Create the input graph
-    var g = new dagreD3.graphlib.Graph()
+    var g = new dagreD3.graphlib.Graph({ directed: false })
       .setGraph(options)
       .setDefaultEdgeLabel(function() {
         return {};
@@ -106,32 +105,52 @@
       console.log(src, dest);
       // pass src and dest into the algorithm
 
-      graphList = [[0, 1, 3],
-                   [1, 2, 5],
-                   [2, 3, 12],
-                   [3, 4, 2],
-                   [4, 5, 7],
-                   [1, 7, 3],
-                   [1, 6, 5],
-                   [6, 7, 9],
-                   [0, 7, 7],
-                   [4, 7, 4],
-                   [2, 6, 6],
-                   [0, 4, 20],
-                   [1, 3, 3]]
-      listOfLinks = flood(src, dest, graphList, [], {value: 0}, {destFound: false});
+      graphList = [
+        [0, 1, 3],
+        [1, 2, 5],
+        [2, 3, 12],
+        [3, 4, 2],
+        [4, 5, 7],
+        [1, 7, 3],
+        [1, 6, 5],
+        [6, 7, 9],
+        [0, 7, 7],
+        [4, 7, 4],
+        [2, 6, 6],
+        [0, 4, 20],
+        [1, 3, 3]
+      ];
+      listOfLinks = flood(
+        src,
+        dest,
+        graphList,
+        [],
+        { value: 0 },
+        { destFound: false }
+      );
 
-      // TODO: The graph looks undirected but is still directed
-      // Need to make undirected so order of nodes in an edge does not matter
-      // i.e g.edge(0, 1) should be equal to g.edge(1, 0)
+      console.log("List of links", listOfLinks);
       console.log(g.isDirected());
       console.log(listOfLinks);
       // Example of output:
       for (var i = 0; i < listOfLinks.length; i++) {
         g.node(listOfLinks[i]).style = "fill: #f77";
-        if (i !== listOfLinks.length - 1) { //For every node except the last one
-          g.edge(listOfLinks[i], listOfLinks[i+1]).style = 
-            "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+        if (i !== listOfLinks.length - 1) {
+          //For every node except the last one
+
+          console.log(
+            "links from ",
+            listOfLinks[i],
+            " to ",
+            listOfLinks[i + 1]
+          );
+
+          if ((listOfLinks[i], listOfLinks[i + 1])) {
+            if (g.hasEdge(listOfLinks[i], listOfLinks[i + 1])) {
+              g.edge(listOfLinks[i], listOfLinks[i + 1]).style =
+                "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;";
+            }
+          }
         }
       }
       render(svg, g);
